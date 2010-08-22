@@ -68,9 +68,9 @@ set statusline+=%{exists('g:loaded_rvm')?rvm#statusline():''}
 "set statusline+=%*
 
 "set statusline+=%h      "help file flag
-"set statusline+=%y      "filetype
+set statusline+=%y      "filetype
 "set statusline+=%r      "read only flag
-"set statusline+=%m      "modified flag
+set statusline+=%m      "modified flag
 
 "display a warning if &et is wrong, or we have mixed-indenting
 "set statusline+=%#error#
@@ -210,6 +210,7 @@ function! s:Median(nums)
 endfunction
 
 "indent settings
+set tabstop=2
 set shiftwidth=2
 set softtabstop=2
 set expandtab
@@ -395,3 +396,126 @@ nmap <Tab> gt
 nmap <S-Tab> gT
 
 let ScreenShot = {'Icon':0, 'Credits':0, 'force_background':'#FFFFFF'} 
+
+"import myself vimrc config"
+if has("gui_running")
+  colors dw_red
+else
+  colors v13
+endif
+
+syntax on
+
+set nocp
+set number
+set cindent
+set incsearch
+set autoindent
+set smartindent
+
+filetype on
+filetype plugin on
+filetype indent on
+
+map <F2> :execute "vimgrep /" . expand("<cword>") . "/j **" <Bar> cw<CR>
+
+cabbrev lvim
+      \ lvim /\<lt><C-R><C-W>\>/gj
+      \ *<C-R>=(expand("%:e")=="" ? "" : ".".expand("%:e"))<CR>
+      \ <Bar> lw
+      \ <C-Left><C-Left><C-Left>
+
+" <F5>-<F8> 快捷鍵設定 for C/C++ coding
+map   <F5>   :cp<CR>
+map   <F6>   :cn<CR>
+map   <F7>   :make<CR>   :copen<CR>   <C-W>10_
+map   <F8>   :!./%<<CR>
+
+" <F11>-<F12> 快捷鍵設定 切換 Buffer
+nnoremap <F11>       :bp!<CR>
+nnoremap <Leader>11  :bp!<CR>
+inoremap <F11> <ESC> :bp!<CR>
+
+nnoremap <F12>       :bn!<CR>
+nnoremap <Leader>12  :bn!<CR>
+inoremap <F12> <ESC> :bn!<CR>
+
+set makeprg=make\ %<
+
+" miniBufExpl的設定
+"let g:miniBufExplMapWindowNavVim = 1
+let g:miniBufExplMapWindowNavArrows = 1
+let g:miniBufExplMapCTabSwitchBufs = 1
+"let g:miniBufExplModSelTarget = 1
+let g:miniBufExplMapWindowNavVim = 1 "Ctrl-<hjkl> to move to window
+let g:miniBufExplTabWrap = 1 " make tabs show complete (no broken on two lines)
+
+" 使用 Ctrl + 左右鍵快速切換 buffer
+map <C-right> <ESC>:bn<CR>
+map <C-left> <ESC>:bp<CR>
+
+" 使用上下鍵可在自動換行之間移動
+map <DOWN> gj
+map <UP> gk
+imap <DOWN> <ESC>gji
+imap <UP> <ESC>gki
+
+" 使用 Ctrl+F2 隱藏或顯示 Gvim 的選單
+set guioptions-=T
+set guioptions-=m
+map <silent> <C-F2> :if &guioptions =~# 'T' <Bar>
+      \set guioptions-=T <Bar>
+      \set guioptions-=m <Bar>
+      \else <Bar>
+      \set guioptions+=T <Bar>
+      \set guioptions+=m <Bar>
+      \endif<CR>
+
+" Set AutoComplPop support SnipMate trigger completion
+let g:acp_enableAtStartup = 1
+let g:acp_completeOption = '.,w,b,u,t,i,k'
+let g:acp_behaviorSnipmateLength = 1
+let g:acp_behaviorKeywordCommand = "\<C-n>"
+
+" Set AutoComplPop support javascript
+let jsbehavs = { 'javascript': [] }
+call add(jsbehavs.javascript, {
+      \   'command'      : "\<C-x>\<C-u>",
+      \   'completefunc' : 'acp#completeSnipmate',
+      \   'meets'        : 'acp#meetsForSnipmate',
+      \   'onPopupClose' : 'acp#onPopupCloseSnipmate',
+      \   'repeat'       : 0,
+      \})
+call add(jsbehavs.javascript, {
+      \   'command' : g:acp_behaviorKeywordCommand,
+      \   'meets'   : 'acp#meetsForKeyword',
+      \   'repeat'  : 0,
+      \ })
+call add(jsbehavs.javascript, {
+      \    'command'  : "\<C-x>\<C-o>",
+      \    'meets'   : 'acp#meetsForKeyword',
+      \    'repeat'   : 0,
+      \})
+let g:acp_behavior = {}
+call extend(g:acp_behavior, jsbehavs, 'keep')
+
+" 游標移動後, 一樣可以用 backsapce, del 等刪除動作
+set bs=2
+
+" UTF-8 Big5 Setting
+" 以下四個設下去. vim 編出來都是 utf-8 編碼的.
+set fileencodings=utf-8,big5
+set fileencoding=utf-8
+" 檔案存檔會存成utf-8編碼
+set termencoding=utf-8
+set enc=utf-8
+set tenc=utf8
+
+" 自動到最後離開的位置
+if has("autocmd")
+  autocmd BufRead *.txt set tw=78
+  autocmd BufReadPost *
+        \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+        \   exe "normal g'\"" |
+        \ endif
+endif
