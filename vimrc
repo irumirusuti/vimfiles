@@ -271,7 +271,7 @@ if has("gui_running")
     endif
 
     if has("gui_mac") || has("gui_macvim")
-        set guifont=Menlo:h14
+        set guifont=Menlo:h12
         " key binding for Command-T to behave properly
         " uncomment to replace the Mac Command-T key to Command-T plugin
         "macmenu &File.New\ Tab key=<nop>
@@ -432,13 +432,23 @@ map   <F7>   :make<CR>   :copen<CR>   <C-W>10_
 map   <F8>   :!./%<<CR>
 
 " <F11>-<F12> 快捷鍵設定 切換 Buffer
-nnoremap <F11>       :bp!<CR>
-nnoremap <Leader>11  :bp!<CR>
-inoremap <F11> <ESC> :bp!<CR>
+if $OSTYPE == 'darwin10.0'
+  nnoremap <F11>       :bp!<CR>
+  nnoremap <Leader>11  :bp!<CR>
+  inoremap <F11> <ESC> :bp!<CR>
 
-nnoremap <F12>       :bn!<CR>
-nnoremap <Leader>12  :bn!<CR>
-inoremap <F12> <ESC> :bn!<CR>
+  nnoremap <F12>       :bn!<CR>
+  nnoremap <Leader>12  :bn!<CR>
+  inoremap <F12> <ESC> :bn!<CR>
+else
+  nnoremap <F3>       :bp!<CR>
+  nnoremap <Leader>3  :bp!<CR>
+  inoremap <F3> <ESC> :bp!<CR>
+
+  nnoremap <F4>       :bn!<CR>
+  nnoremap <Leader>4  :bn!<CR>
+  inoremap <F4> <ESC> :bn!<CR>
+endif
 
 set makeprg=make\ %<
 
@@ -519,3 +529,5 @@ if has("autocmd")
         \   exe "normal g'\"" |
         \ endif
 endif
+
+nnoremap <C-t> :CommandT<CR>
