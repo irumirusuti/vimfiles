@@ -395,6 +395,12 @@ map <C-l> <C-w>l
 nmap <Tab> gt
 nmap <S-Tab> gT
 
+"Key mapping for textmate-like indentation
+nmap <D-[> <<
+nmap <D-]> >>
+vmap <D-[> <gv
+vmap <D-]> >gv
+
 let ScreenShot = {'Icon':0, 'Credits':0, 'force_background':'#FFFFFF'} 
 
 "import myself vimrc config"
