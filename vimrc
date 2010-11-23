@@ -423,7 +423,7 @@ filetype on
 filetype plugin on
 filetype indent on
 
-map <F2> :execute "vimgrep /" . expand("<cword>") . "/j **" <Bar> cw<CR>
+map <F2> :execute "Ack \'" . expand("<cword>") . "\'"<CR>
 
 cabbrev lvim
       \ lvim /\<lt><C-R><C-W>\>/gj
