@@ -265,7 +265,8 @@ if has("gui_running")
     set columns=115
 
     if has("gui_gnome")
-        set term=gnome-256color
+        "set term=gnome-256color
+        set term=ansi
         colorscheme ir_dark
         set guifont=Inconsolata\ Medium\ 12
     endif
