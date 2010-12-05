@@ -108,25 +108,25 @@ autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
 "return '[\s]' if trailing white space is detected
 "return '' otherwise
 function! StatuslineTrailingSpaceWarning()
-    if !exists("b:statusline_trailing_space_warning")
-        if search('\s\+$', 'nw') != 0
-            let b:statusline_trailing_space_warning = '[\s]'
-        else
-            let b:statusline_trailing_space_warning = ''
-        endif
+  if !exists("b:statusline_trailing_space_warning")
+    if search('\s\+$', 'nw') != 0
+      let b:statusline_trailing_space_warning = '[\s]'
+    else
+      let b:statusline_trailing_space_warning = ''
     endif
-    return b:statusline_trailing_space_warning
+  endif
+  return b:statusline_trailing_space_warning
 endfunction
 
 
 "return the syntax highlight group under the cursor ''
 function! StatuslineCurrentHighlight()
-    let name = synIDattr(synID(line('.'),col('.'),1),'name')
-    if name == ''
-        return ''
-    else
-        return '[' . name . ']'
-    endif
+  let name = synIDattr(synID(line('.'),col('.'),1),'name')
+  if name == ''
+    return ''
+  else
+    return '[' . name . ']'
+  endif
 endfunction
 
 "recalculate the tab warning flag when idle and after writing
@@ -136,19 +136,19 @@ autocmd cursorhold,bufwritepost * unlet! b:statusline_tab_warning
 "return '[mixed-indenting]' if spaces and tabs are used to indent
 "return an empty string if everything is fine
 function! StatuslineTabWarning()
-    if !exists("b:statusline_tab_warning")
-        let tabs = search('^\t', 'nw') != 0
-        let spaces = search('^ ', 'nw') != 0
+  if !exists("b:statusline_tab_warning")
+    let tabs = search('^\t', 'nw') != 0
+    let spaces = search('^ ', 'nw') != 0
 
-        if tabs && spaces
-            let b:statusline_tab_warning =  '[mixed-indenting]'
-        elseif (spaces && !&et) || (tabs && &et)
-            let b:statusline_tab_warning = '[&et]'
-        else
-            let b:statusline_tab_warning = ''
-        endif
+    if tabs && spaces
+      let b:statusline_tab_warning =  '[mixed-indenting]'
+    elseif (spaces && !&et) || (tabs && &et)
+      let b:statusline_tab_warning = '[&et]'
+    else
+      let b:statusline_tab_warning = ''
     endif
-    return b:statusline_tab_warning
+  endif
+  return b:statusline_tab_warning
 endfunction
 
 "recalculate the long line warning when idle and after saving
@@ -162,51 +162,51 @@ autocmd cursorhold,bufwritepost * unlet! b:statusline_long_line_warning
 "lines, y is the median length of the long lines and z is the length of the
 "longest line
 function! StatuslineLongLineWarning()
-    if !exists("b:statusline_long_line_warning")
-        let long_line_lens = s:LongLines()
+  if !exists("b:statusline_long_line_warning")
+    let long_line_lens = s:LongLines()
 
-        if len(long_line_lens) > 0
-            let b:statusline_long_line_warning = "[" .
-                        \ '#' . len(long_line_lens) . "," .
-                        \ 'm' . s:Median(long_line_lens) . "," .
-                        \ '$' . max(long_line_lens) . "]"
-        else
-            let b:statusline_long_line_warning = ""
-        endif
+    if len(long_line_lens) > 0
+      let b:statusline_long_line_warning = "[" .
+            \ '#' . len(long_line_lens) . "," .
+            \ 'm' . s:Median(long_line_lens) . "," .
+            \ '$' . max(long_line_lens) . "]"
+    else
+      let b:statusline_long_line_warning = ""
     endif
-    return b:statusline_long_line_warning
+  endif
+  return b:statusline_long_line_warning
 endfunction
 
 "return a list containing the lengths of the long lines in this buffer
 function! s:LongLines()
-    let threshold = (&tw ? &tw : 80)
-    let spaces = repeat(" ", &ts)
+  let threshold = (&tw ? &tw : 80)
+  let spaces = repeat(" ", &ts)
 
-    let long_line_lens = []
+  let long_line_lens = []
 
-    let i = 1
-    while i <= line("$")
-        let len = strlen(substitute(getline(i), '\t', spaces, 'g'))
-        if len > threshold
-            call add(long_line_lens, len)
-        endif
-        let i += 1
-    endwhile
+  let i = 1
+  while i <= line("$")
+    let len = strlen(substitute(getline(i), '\t', spaces, 'g'))
+    if len > threshold
+      call add(long_line_lens, len)
+    endif
+    let i += 1
+  endwhile
 
-    return long_line_lens
+  return long_line_lens
 endfunction
 
 "find the median of the given array of numbers
 function! s:Median(nums)
-    let nums = sort(a:nums)
-    let l = len(nums)
+  let nums = sort(a:nums)
+  let l = len(nums)
 
-    if l % 2 == 1
-        let i = (l-1) / 2
-        return nums[i]
-    else
-        return (nums[l/2] + nums[(l/2)-1]) / 2
-    endif
+  if l % 2 == 1
+    let i = (l-1) / 2
+    return nums[i]
+  else
+    return (nums[l/2] + nums[(l/2)-1]) / 2
+  endif
 endfunction
 
 "indent settings
@@ -256,42 +256,45 @@ let g:CommandTMaxHeight=10
 let g:CommandTMatchWindowAtTop=1
 
 if has("gui_running")
-    "tell the term has 256 colors
-    set t_Co=256
+  "tell the term has 256 colors
+  set t_Co=256
 
+  colorscheme ir_blue
+  set guitablabel=%M%t
+  set lines=40
+  set columns=115
+
+  if has("gui_gnome")
+    set term=gnome-256color
+    colorscheme ir_dark
+    set guifont=Inconsolata\ Medium\ 12
+  endif
+
+  if has("gui_mac") || has("gui_macvim")
     colorscheme railscasts
-    set guitablabel=%M%t
-    set lines=40
-    set columns=115
+    set guifont=Menlo:h12
+    " key binding for Command-T to behave properly
+    " uncomment to replace the Mac Command-T key to Command-T plugin
+    "macmenu &File.New\ Tab key=<nop>
+    "map <D-t> :CommandT<CR>
+    " make Mac's Option key behave as the Meta key
+    set invmmta
+    try
+      set transparency=5
+    catch
+    endtry
+  endif
 
-    if has("gui_gnome")
-        "set term=gnome-256color
-        set term=ansi
-        colorscheme ir_dark
-        set guifont=Inconsolata\ Medium\ 12
-    endif
-
-    if has("gui_mac") || has("gui_macvim")
-        set guifont=Menlo:h12
-        " key binding for Command-T to behave properly
-        " uncomment to replace the Mac Command-T key to Command-T plugin
-        "macmenu &File.New\ Tab key=<nop>
-        "map <D-t> :CommandT<CR>
-        " make Mac's Option key behave as the Meta key
-        set invmmta
-        try
-          set transparency=5
-        catch
-        endtry
-    endif
-
-    if has("gui_win32") || has("gui_win32s")
-        set guifont=Consolas:h12
-        set enc=utf-8
-    endif
+  if has("gui_win32") || has("gui_win32s")
+    set guifont=Consolas:h12
+    set enc=utf-8
+  endif
 else
-    "dont load csapprox if there is no gui support - silences an annoying warning
-    let g:CSApprox_loaded = 1
+  set t_Co=256
+ "" highlight Normal ctermfg=None ctermbg=None
+  colorscheme ir_dark
+  "dont load csapprox if there is no gui support - silences an annoying warning
+  let g:CSApprox_loaded = 1
 endif
 
 " PeepOpen uses <Leader>p as well so you will need to redefine it so something
@@ -340,23 +343,23 @@ endtry
 autocmd vimenter * call s:SetupSnippets()
 function! s:SetupSnippets()
 
-    "if we're in a rails env then read in the rails snippets
-    if filereadable("./config/environment.rb")
-        call ExtractSnips("~/.vim/snippets/ruby-rails", "ruby")
-        call ExtractSnips("~/.vim/snippets/eruby-rails", "eruby")
-    endif
+  "if we're in a rails env then read in the rails snippets
+  if filereadable("./config/environment.rb")
+    call ExtractSnips("~/.vim/snippets/ruby-rails", "ruby")
+    call ExtractSnips("~/.vim/snippets/eruby-rails", "eruby")
+  endif
 
-    call ExtractSnips("~/.vim/snippets/html", "eruby")
-    call ExtractSnips("~/.vim/snippets/html", "xhtml")
-    call ExtractSnips("~/.vim/snippets/html", "php")
+  call ExtractSnips("~/.vim/snippets/html", "eruby")
+  call ExtractSnips("~/.vim/snippets/html", "xhtml")
+  call ExtractSnips("~/.vim/snippets/html", "php")
 endfunction
 
 "visual search mappings
 function! s:VSetSearch()
-    let temp = @@
-    norm! gvy
-    let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
-    let @@ = temp
+  let temp = @@
+  norm! gvy
+  let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
+  let @@ = temp
 endfunction
 vnoremap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
 vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
@@ -366,24 +369,24 @@ vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
 "dont do it when writing a commit log entry
 autocmd BufReadPost * call SetCursorPosition()
 function! SetCursorPosition()
-    if &filetype !~ 'commit\c'
-        if line("'\"") > 0 && line("'\"") <= line("$")
-            exe "normal! g`\""
-            normal! zz
-        endif
-    end
+  if &filetype !~ 'commit\c'
+    if line("'\"") > 0 && line("'\"") <= line("$")
+      exe "normal! g`\""
+      normal! zz
+    endif
+  end
 endfunction
 
 "define :HighlightLongLines command to highlight the offending parts of
 "lines that are longer than the specified length (defaulting to 80)
 command! -nargs=? HighlightLongLines call s:HighlightLongLines('<args>')
 function! s:HighlightLongLines(width)
-    let targetWidth = a:width != '' ? a:width : 79
-    if targetWidth > 0
-        exec 'match Todo /\%>' . (targetWidth) . 'v/'
-    else
-        echomsg "Usage: HighlightLongLines [natural number]"
-    endif
+  let targetWidth = a:width != '' ? a:width : 79
+  if targetWidth > 0
+    exec 'match Todo /\%>' . (targetWidth) . 'v/'
+  else
+    echomsg "Usage: HighlightLongLines [natural number]"
+  endif
 endfunction
 
 "key mapping for window navigation
@@ -396,20 +399,8 @@ map <C-l> <C-w>l
 nmap <Tab> gt
 nmap <S-Tab> gT
 
-"Key mapping for textmate-like indentation
-nmap <D-[> <<
-nmap <D-]> >>
-vmap <D-[> <gv
-vmap <D-]> >gv
-
 let ScreenShot = {'Icon':0, 'Credits':0, 'force_background':'#FFFFFF'} 
 
-"import myself vimrc config"
-if has("gui_running")
-  colors dw_red
-else
-  colors v13
-endif
 
 syntax on
 
@@ -424,7 +415,7 @@ filetype on
 filetype plugin on
 filetype indent on
 
-map <F2> :execute "Ack \'" . expand("<cword>") . "\'"<CR>
+map <F2> :execute "vimgrep /" . expand("<cword>") . "/j **" <Bar> cw<CR>
 
 cabbrev lvim
       \ lvim /\<lt><C-R><C-W>\>/gj
