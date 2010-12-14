@@ -271,7 +271,7 @@ if has("gui_running")
   endif
 
   if has("gui_mac") || has("gui_macvim")
-    colorscheme railscasts
+    colorscheme vibrantink 
     set guifont=Menlo:h12
     " key binding for Command-T to behave properly
     " uncomment to replace the Mac Command-T key to Command-T plugin
